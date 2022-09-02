@@ -1,6 +1,7 @@
 package com.agena.android.weatherforecast
 
 import android.app.Application
+import com.agena.android.weatherforecast.di.appModule
 import com.agena.android.weatherforecast.di.networkModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -17,7 +18,10 @@ class WeatherForecastApplication : Application() {
             // Android context
             androidContext(this@WeatherForecastApplication)
             // use modules
-            modules(networkModule)
+            modules(
+                networkModule,
+                appModule
+            )
         }
     }
 }

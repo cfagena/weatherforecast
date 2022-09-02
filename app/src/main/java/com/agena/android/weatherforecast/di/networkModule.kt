@@ -1,6 +1,6 @@
 package com.agena.android.weatherforecast.di
 
-import com.agena.android.weatherforecast.data.network.ApiInterface
+import com.agena.android.weatherforecast.data.network.OpenWeatherApi
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -44,7 +44,7 @@ val networkModule = module {
         .client(mOkHttpClient)
         .build()
 
-    single<ApiInterface> {
-        retrofit.create(ApiInterface::class.java)
+    single<OpenWeatherApi> {
+        retrofit.create(OpenWeatherApi::class.java)
     }
 }

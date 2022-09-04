@@ -28,15 +28,18 @@ class MainActivity : AppCompatActivity() {
 
         setupRecyclerView()
         setupObservers()
+        setupButtons()
         initializeData()
+    }
 
+    private fun setupButtons() {
         binding.swipeRefresh.setOnRefreshListener {
             mainViewModel.getCurrentWeather()
-            binding.swipeRefresh.isRefreshing = false
         }
     }
 
     private fun initializeData() {
+        binding.swipeRefresh.isRefreshing = true
         mainViewModel.getCurrentWeather()
     }
 
@@ -46,6 +49,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "Current weather observer: list ${it.size}")
                 listAdapter.addList(it)
             }
+            binding.swipeRefresh.isRefreshing = false
         }
     }
 

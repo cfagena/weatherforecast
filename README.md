@@ -1,2 +1,2 @@
-# Weather Forecast
-Weather Forecast app using OpenWeather API
+# Current Weather
+Current Weather app using OpenWeather API

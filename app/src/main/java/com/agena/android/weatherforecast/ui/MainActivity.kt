@@ -2,11 +2,11 @@ package com.agena.android.weatherforecast.ui
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.agena.android.weatherforecast.databinding.ActivityMainBinding
 import com.agena.android.weatherforecast.viewmodel.MainViewModel
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -18,7 +18,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val mainViewModel: MainViewModel by viewModel()
-    private val listAdapter: CityWeatherAdapter by inject()
+    private val listAdapter by lazy {
+        CityWeatherAdapter(this) {
+            Toast.makeText(this, it.cityName, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

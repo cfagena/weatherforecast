@@ -1,5 +1,6 @@
 package com.agena.android.weatherforecast.data.network
 
+import com.agena.android.weatherforecast.data.model.ForecastResponse
 import com.agena.android.weatherforecast.data.model.WeatherResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -19,4 +20,10 @@ interface OpenWeatherApi {
         @Query(ID) id: Int,
         @Query(UNITS) units: String = METRIC
     ): Response<WeatherResponse>
+
+    @GET("forecast")
+    suspend fun getForecastById(
+        @Query(ID) id: Int,
+        @Query(UNITS) units: String = METRIC
+    ): Response<ForecastResponse>
 }

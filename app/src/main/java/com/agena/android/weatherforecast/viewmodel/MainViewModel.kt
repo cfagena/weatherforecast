@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.agena.android.weatherforecast.data.CurrentWeatherRepository
 import com.agena.android.weatherforecast.data.ResultData
+import com.agena.android.weatherforecast.model.ForecastEntity
+import com.agena.android.weatherforecast.model.ForecastWeatherToForecastEntityMapper
 import com.agena.android.weatherforecast.model.WeatherEntity
 import com.agena.android.weatherforecast.model.WeatherToWeatherEntityMapper
 import kotlinx.coroutines.CoroutineDispatcher
@@ -14,6 +16,8 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class MainViewModel(
@@ -61,6 +65,25 @@ class MainViewModel(
             }
             deferreds.awaitAll().filterNotNull().let {
                 _weather.postValue(it)
+            }
+        }
+    }
+
+    fun getWeatherForecast(cityId: Int): Flow<ForecastEntity?> {
+        return flow<ForecastEntity?> {
+            when (val result = currentWeatherRepository.getWeatherForecastByCityId(cityId)) {
+                is ResultData.Success -> {
+                    Log.d(TAG, "getCurrentWeather success ${result.value.city.cityName}")
+                    emit(ForecastWeatherToForecastEntityMapper.map(result.value))
+                }
+                is ResultData.Loading -> {
+                    Log.d(TAG, "Loading weather forecast")
+                    emit(null)
+                }
+                is ResultData.Failure -> {
+                    Log.e(TAG, "Error loading weather forecast ${result.message}")
+                    emit(null)
+                }
             }
         }
     }

@@ -13,7 +13,8 @@ import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 class CityWeatherAdapter(
-    val context: Context
+    private val context: Context,
+    private val onItemClicked: (weatherEntity: WeatherEntity) -> Unit
 ) : RecyclerView.Adapter<CityWeatherAdapter.ResultItemViewHolder>() {
 
     private var items = listOf<WeatherEntity>()
@@ -25,37 +26,49 @@ class CityWeatherAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultItemViewHolder {
         val binding = CityWeatherItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ResultItemViewHolder(binding)
+        return ResultItemViewHolder(binding, onItemClicked)
     }
 
     override fun onBindViewHolder(holder: ResultItemViewHolder, position: Int) {
-        holder.binding.cityName.text = items[position].cityName
-        holder.binding.localTime.text = ZonedDateTime.now(
-            ZoneOffset.ofTotalSeconds(items[position].timezone)
-        ).format(DateTimeFormatter.ofPattern("HH:mm"))
-        holder.binding.temperature.text = items[position]
-            .temperature
-            .roundToInt()
-            .toString()
-            .plus("°C")
-        holder.binding.weatherDescription.text = items[position].weatherDescription
-
-        val value = items[position].iconId
-        val resourceId: Int = context.resources.getIdentifier(
-            "ic_$value",
-            "drawable",
-            context.packageName
-        )
-
-        if (resourceId != 0) {
-            holder.binding.weatherIcon.setImageDrawable(
-                ContextCompat.getDrawable(context, resourceId)
-            )
-        }
+        holder.bind(items[position])
     }
 
     override fun getItemCount(): Int = items.size
 
-    inner class ResultItemViewHolder(val binding: CityWeatherItemBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    inner class ResultItemViewHolder(
+        private val binding: CityWeatherItemBinding,
+        val onItemClicked: (weatherEntity: WeatherEntity) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(weatherEntity: WeatherEntity) {
+            with(binding) {
+                cityName.text = weatherEntity.cityName
+                localTime.text = ZonedDateTime.now(
+                    ZoneOffset.ofTotalSeconds(weatherEntity.timezone)
+                ).format(DateTimeFormatter.ofPattern("HH:mm"))
+                temperature.text = weatherEntity
+                    .temperature
+                    .roundToInt()
+                    .toString()
+                    .plus("°C")
+                weatherDescription.text = weatherEntity.weatherDescription
+
+                val value = weatherEntity.iconId
+                val resourceId: Int = context.resources.getIdentifier(
+                    "ic_$value",
+                    "drawable",
+                    context.packageName
+                )
+
+                if (resourceId != 0) {
+                    weatherIcon.setImageDrawable(
+                        ContextCompat.getDrawable(context, resourceId)
+                    )
+                }
+                binding.root.setOnClickListener {
+                    onItemClicked(weatherEntity)
+                }
+            }
+        }
+    }
 }
